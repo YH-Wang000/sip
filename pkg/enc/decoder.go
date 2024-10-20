@@ -3,8 +3,9 @@ package enc
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"net"
-	"strings"
+	"strconv"
 	"time"
 
 	"sip/pkg/sipmsg"
@@ -28,14 +29,22 @@ func NewDecoder(conn net.Conn, opts ...DecoderOption) Decoder {
 	for _, opt := range opts {
 		opt(d)
 	}
-	// initial capacity 1KB, max capacity 8KB
-	if d.bodyLengthLimit+d.headerLengthLimit == 0 {
+	if d.bodyLengthLimit <= 0 {
 		d.SetBodyLengthLimit(DefaultMessageLength / 2)
-		d.SetBodyLengthLimit(DefaultMessageLength / 2)
+	}
+	if d.headerLengthLimit <= 0 {
+		d.SetHeaderLengthLimit(DefaultMessageLength / 2)
 	}
 
 	d.s.Buffer(make([]byte, InitDecoderBufferSize), d.headerLengthLimit+d.bodyLengthLimit)
 	d.s.Split(splitCRLF)
+
+	if d.readHeaderTimeout <= 0 {
+		d.SetReadHeaderTimeout(DefaultReadHeaderTimeout)
+	}
+	if d.readBodyTimeout <= 0 {
+		d.SetReadHeaderTimeout(DefaultReadBodyTimeout)
+	}
 	return d
 }
 
@@ -79,10 +88,18 @@ func (d *decoder) SetBodyLengthLimit(limit int) {
 }
 
 func (d *decoder) SetReadHeaderTimeout(timeout time.Duration) {
+	if d.readHeaderTimeout <= 0 {
+		d.readHeaderTimeout = DefaultReadHeaderTimeout
+		return
+	}
 	d.readHeaderTimeout = timeout
 }
 
 func (d *decoder) SetReadBodyTimeout(timeout time.Duration) {
+	if d.readBodyTimeout <= 0 {
+		d.readBodyTimeout = DefaultReadBodyTimeout
+		return
+	}
 	d.readBodyTimeout = timeout
 }
 
@@ -101,56 +118,58 @@ func (d *decoder) ReadMessage() (*sipmsg.GenericMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	// read headers
-	headers := make(map[string][]string)
-	var wholeHeader strings.Builder
-	for d.s.Scan() {
-		headerLine := d.s.Text()
-		if headerLine == sipmsg.CRLF {
-			// This means the end of the headers
-			break
-		}
-		if !strings.HasPrefix(headerLine, sipmsg.SP) && !strings.HasPrefix(headerLine, sipmsg.TAB) {
-			// This means a new header, the old header must be processed
-			headerKey, headerValue, err := sipmsg.ParseHeader(wholeHeader.String())
-			if err != nil {
-				return nil, err
-			}
-			if hValue, ok := headers[headerKey]; ok {
-				// Need to merge repeated header key
-				headerValue = append(headerValue, hValue...)
-			}
-			headers[headerKey] = headerValue
-			// Clear the previous row of data and prepare the next header
-			wholeHeader.Reset()
-		}
-		wholeHeader.WriteString(headerLine)
+	headers, err := sipmsg.ReadHeaders(d.s)
+	if err != nil {
+		return nil, err
 	}
 	msg.MessageHeader = headers
 
-	if noBody(msg.StartLine) {
+	if noBody(msg) {
 		return msg, nil
 	}
-
 	err = d.conn.SetReadDeadline(time.Now().Add(d.readBodyTimeout))
 	if err != nil {
 		return nil, err
 	}
-	// read body
-	// todo just read according to the Content-Length header
+	contentLength, err := getContentLength(msg.MessageHeader)
+	body, err := sipmsg.ReadBody(d.s, contentLength)
+	if err != nil {
+		return nil, err
+	}
+	msg.MessageBody = body
+	err = d.conn.SetReadDeadline(time.Time{})
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	err = sipmsg.Validator.Struct(msg)
+	if err != nil {
+		return nil, err
+	}
+	return msg, nil
 }
 
-func noBody(startLine sipmsg.SipStartLine) bool {
+func getContentLength(header sipmsg.SipMessageHeader) (int, error) {
+	headerValue, ok := header.Lookup("Content-Length")
+	if !ok {
+		return 0, errors.New("Content-Length header not found")
+	}
+	if len(headerValue.FiledValue) == 0 {
+		return 0, errors.New("Content-Length header value is empty")
+	}
+	return strconv.Atoi(headerValue.FiledValue[0])
+}
+
+func noBody(msg *sipmsg.GenericMessage) bool {
 	// todo Check all cases where body is not required
-	if startLine.IsRequestLine() {
-		return startLine.(*sipmsg.RequestLine).Method == sipmsg.Ack
+	contentLength, err := getContentLength(msg.MessageHeader)
+	if err != nil {
+		return true
 	}
-	if startLine.IsStatusLine() {
-		return startLine.(*sipmsg.StatusLine).StatusCode < 200
+	if contentLength == 0 {
+		return true
 	}
-	return true
+	return false
 }
 
 func splitCRLF(data []byte, atEOF bool) (advance int, token []byte, err error) {

@@ -36,4 +36,7 @@ const (
 	LrKey        SipUriParamNameEnum = "lr"
 )
 
-const DefaultSipVersion = "SIP/2.0"
+const (
+	DefaultSipVersion = "SIP/2.0"
+	DefaultSipPort    = "5060"
+)

@@ -9,12 +9,13 @@ const (
 type MethodEnum string
 
 const (
-	Register MethodEnum = "REGISTER"
-	Invite   MethodEnum = "INVITE"
-	Ack      MethodEnum = "ACK"
-	Cancel   MethodEnum = "CANCEL"
-	Bye      MethodEnum = "BYE"
-	Options  MethodEnum = "OPTIONS"
+	Register  MethodEnum = "REGISTER"
+	Invite    MethodEnum = "INVITE"
+	Ack       MethodEnum = "ACK"
+	Cancel    MethodEnum = "CANCEL"
+	Bye       MethodEnum = "BYE"
+	Options   MethodEnum = "OPTIONS"
+	Subscribe MethodEnum = "SUBSCRIBE"
 )
 
 type SipSchemeEnum string

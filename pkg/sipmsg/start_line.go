@@ -2,6 +2,7 @@ package sipmsg
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 )
 
@@ -16,8 +17,20 @@ func ParseStartLine(line string) (SipStartLine, error) {
 		return nil, errors.New("start line is invalid")
 	}
 	if strings.HasPrefix(line, DefaultSipVersion) {
-
-		return &StatusLine{}, nil
+		spIndex := strings.IndexByte(line, ' ')
+		sipVersion := line[:spIndex]
+		line = line[spIndex+1:]
+		spIndex = strings.IndexByte(line, ' ')
+		statusCode, err := strconv.Atoi(line[:spIndex])
+		if err != nil {
+			return nil, err
+		}
+		reasonPhrase := line[spIndex+1:]
+		return &StatusLine{
+			SipVersion:   sipVersion,
+			StatusCode:   statusCode,
+			ReasonPhrase: reasonPhrase,
+		}, nil
 	}
 	split := strings.Split(line, SP)
 	if len(split) != 3 {

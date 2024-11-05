@@ -9,7 +9,10 @@ const (
 )
 
 // OK 2xx
-const OK = 200
+const (
+	OK       = 200
+	Accepted = 202
+)
 
 // 3xx
 const (

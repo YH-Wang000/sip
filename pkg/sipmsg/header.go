@@ -27,37 +27,88 @@ func ParseHeader(text string) (string, *HeaderFiledValue, error) {
 		return "", nil, errors.New("invalid header string")
 	}
 
-	colonIndex := strings.IndexByte(text, ':')
-	if colonIndex < 0 {
+	headerName, text, found := strings.Cut(text, ":")
+	if !found {
 		return "", nil, errors.New("invalid header string")
 	}
-	headerName := strings.TrimSpace(text[:colonIndex])
-	text = strings.TrimSpace(text[colonIndex+1:])
-	semicolonIndex := strings.IndexByte(text, ';')
-	if semicolonIndex < 0 {
-		return headerName, &HeaderFiledValue{
-			FiledValue: strings.Split(text, ","),
-		}, nil
+
+	return headerName, paresHeaderFiledValue(text), nil
+}
+
+func paresHeaderFiledValue(text string) *HeaderFiledValue {
+	text = strings.TrimSpace(text)
+	indices := getAngleBracketIndices(text)
+	result := &HeaderFiledValue{
+		FiledValue: make([]string, 0),
+		Params:     make(map[string]string),
 	}
-	filedValueStr := text[:semicolonIndex]
-	paramsStr := text[semicolonIndex+1:]
-
-	headerFields := strings.Split(filedValueStr, ",")
-
-	params := make(map[string]string)
-	paramsSplit := strings.Split(paramsStr, ";")
-	for i := 0; i < len(paramsSplit); i++ {
-		kvSplit := strings.Split(paramsSplit[i], "=")
-		if len(kvSplit) == 2 {
-			params[kvSplit[0]] = kvSplit[1]
-		} else {
-			params[kvSplit[0]] = ""
+	state := 0
+	lastIndex := 0
+	for i, c := range text {
+		if c == ',' && state == 0 && checkIndices(indices, i) {
+			value := text[lastIndex:i]
+			result.FiledValue = append(result.FiledValue, strings.TrimSpace(value))
+			lastIndex = i + 1
+		}
+		if c == ';' && checkIndices(indices, i) {
+			if state == 0 {
+				value := text[lastIndex:i]
+				result.FiledValue = append(result.FiledValue, value)
+				lastIndex = i + 1
+				state = 1
+				continue
+			}
+			paramsStr := text[lastIndex:i]
+			key, value, found := strings.Cut(paramsStr, "=")
+			if !found {
+				continue
+			}
+			result.Params[key] = value
+			lastIndex = i + 1
 		}
 	}
-	return headerName, &HeaderFiledValue{
-		FiledValue: headerFields,
-		Params:     params,
-	}, nil
+	if state == 0 {
+		result.FiledValue = append(result.FiledValue, strings.TrimSpace(text[lastIndex:]))
+	} else if state == 1 {
+		paramsStr := text[lastIndex:]
+		key, value, found := strings.Cut(paramsStr, "=")
+		if !found {
+			return result
+		}
+		result.Params[key] = value
+	}
+	return result
+}
+
+func checkIndices(indices [][2]int, i int) bool {
+	for _, index := range indices {
+		if index[0] <= i && i <= index[1] {
+			return false
+		}
+	}
+	return true
+}
+
+// getAngleBracketIndices 从字符串中获取所有成对的 < 和 > 的索引
+func getAngleBracketIndices(s string) [][2]int {
+	var indices [][2]int
+	balance := 0
+	left := 0
+	for i, char := range s {
+		if char == '<' {
+			if balance == 0 {
+				left = i
+			}
+			balance++
+		} else if char == '>' {
+			balance--
+			if balance == 0 {
+				// 找到一对匹配的 < 和 >
+				indices = append(indices, [2]int{left, i})
+			}
+		}
+	}
+	return indices
 }
 
 func ReadHeaders(s *bufio.Scanner) (map[string]*HeaderFiledValue, error) {

@@ -1,6 +1,9 @@
 package sipmsg
 
-import "bufio"
+import (
+	"bufio"
+	"bytes"
+)
 
 type GenericMessage struct {
 	StartLine     SipStartLine
@@ -9,5 +12,18 @@ type GenericMessage struct {
 }
 
 func ReadBody(s *bufio.Scanner, contentLength int) ([]byte, error) {
-	return nil, nil
+	buff := make([]byte, 0, contentLength)
+	body := bytes.NewBuffer(buff)
+	for s.Scan() {
+		content := s.Text()
+		if body.Len()+len(content) >= contentLength {
+			body.WriteString(content[:contentLength-body.Len()])
+			break
+		}
+		body.WriteString(content)
+	}
+	if err := s.Err(); err != nil {
+		return nil, err
+	}
+	return body.Bytes(), nil
 }

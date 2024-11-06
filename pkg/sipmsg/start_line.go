@@ -48,9 +48,9 @@ func ParseStartLine(line string) (SipStartLine, error) {
 }
 
 type RequestLine struct {
-	Method     MethodEnum `validate:"required, oneof=REGISTER INVITE ACK CANCEL BYE OPTIONS"`
+	Method     MethodEnum `validate:"required,checkSipRequestMethod"`
 	RequestUri *SipUri    `validate:"required"`
-	SipVersion string     `validate:"required, checkSipVersion"`
+	SipVersion string     `validate:"required,checkSipVersion"`
 }
 
 func (r *RequestLine) String() string {
@@ -66,7 +66,7 @@ func (r *RequestLine) IsStatusLine() bool {
 }
 
 type SipUri struct {
-	Scheme        SipSchemeEnum `validate:"required oneof=sip sips tel"`
+	Scheme        SipSchemeEnum `validate:"required,checkSipScheme"`
 	User          string        // resource identifier in host
 	Password      string        // not recommended may cause security risks
 	Host          string        `validate:"required"` // The host providing the SIP resource

@@ -116,22 +116,17 @@ func ReadHeaders(s *bufio.Scanner) (map[string]*HeaderFiledValue, error) {
 	var wholeHeader strings.Builder
 	for s.Scan() {
 		headerLine := s.Text()
-		if headerLine == CRLF {
+		if headerLine == "" {
 			// This means the end of the headers
+			if err := populateHeadersMap(wholeHeader.String(), headers); err != nil {
+				return nil, err
+			}
 			break
 		}
 		if !strings.HasPrefix(headerLine, SP) && !strings.HasPrefix(headerLine, TAB) {
 			// This means a new header, the old header must be processed
-			if whs := wholeHeader.String(); len(whs) > 0 {
-				headerKey, headerValue, err := ParseHeader(whs)
-				if err != nil {
-					return nil, err
-				}
-				if hValue, ok := headers[headerKey]; ok {
-					headerValue.FiledValue = append(headerValue.FiledValue, hValue.FiledValue...)
-					maps.Copy(headerValue.Params, hValue.Params)
-				}
-				headers[headerKey] = headerValue
+			if err := populateHeadersMap(wholeHeader.String(), headers); err != nil {
+				return nil, err
 			}
 			// Clear the previous row of data and prepare the next header
 			wholeHeader.Reset()
@@ -144,4 +139,19 @@ func ReadHeaders(s *bufio.Scanner) (map[string]*HeaderFiledValue, error) {
 		return nil, s.Err()
 	}
 	return headers, nil
+}
+
+func populateHeadersMap(headerStr string, headers map[string]*HeaderFiledValue) error {
+	if len(headerStr) > 0 {
+		headerKey, headerValue, err := ParseHeader(headerStr)
+		if err != nil {
+			return err
+		}
+		if hValue, ok := headers[headerKey]; ok {
+			headerValue.FiledValue = append(headerValue.FiledValue, hValue.FiledValue...)
+			maps.Copy(headerValue.Params, hValue.Params)
+		}
+		headers[headerKey] = headerValue
+	}
+	return nil
 }

@@ -16,7 +16,19 @@ const (
 	Bye       MethodEnum = "BYE"
 	Options   MethodEnum = "OPTIONS"
 	Subscribe MethodEnum = "SUBSCRIBE"
+	Notify    MethodEnum = "NOTIFY"
 )
+
+var SipRequestMethodSet = map[MethodEnum]bool{
+	Register:  true,
+	Invite:    true,
+	Ack:       true,
+	Cancel:    true,
+	Bye:       true,
+	Options:   true,
+	Subscribe: true,
+	Notify:    true,
+}
 
 type SipSchemeEnum string
 

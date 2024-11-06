@@ -176,10 +176,8 @@ func splitCRLF(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	if i := bytes.Index(data, []byte("\r\n")); i >= 0 {
 		return i + 2, data[:i], nil
 	}
-
 	if atEOF && len(data) > 0 {
 		return len(data), data, nil
 	}
-
 	return 0, nil, nil
 }

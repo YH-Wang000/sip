@@ -89,7 +89,7 @@ func checkIndices(indices [][2]int, i int) bool {
 	return true
 }
 
-// getAngleBracketIndices 从字符串中获取所有成对的 < 和 > 的索引
+// getAngleBracketIndices Get the indices of all pairs of < and > from a string
 func getAngleBracketIndices(s string) [][2]int {
 	var indices [][2]int
 	balance := 0

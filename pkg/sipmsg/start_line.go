@@ -68,7 +68,7 @@ func (r *RequestLine) IsStatusLine() bool {
 type SipUri struct {
 	Scheme        SipSchemeEnum `validate:"required,checkSipScheme"`
 	User          string        // resource identifier in host
-	Password      string        // not recommended may cause security risks
+	Password      string        // not recommended, may cause security risks
 	Host          string        `validate:"required"` // The host providing the SIP resource
 	Port          string        `validate:"numeric"`
 	UriParameters map[SipUriParamNameEnum]string

@@ -377,7 +377,6 @@ func getSubscribeMsg() testCase {
 				SipVersion: sipmsg.DefaultSipVersion,
 			},
 			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-
 				"Call-ID": {
 					FiledValue: []string{"59d36468f9e5b94151447e28c066e592@0:0:0:0:0:0:0:0"},
 					Params:     make(map[string]string),
@@ -451,7 +450,6 @@ func getOptionsMsg() testCase {
 				SipVersion: sipmsg.DefaultSipVersion,
 			},
 			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-
 				"Call-ID": {
 					FiledValue: []string{"1204c8d015be5f55ce63ab53eeba1e33@0:0:0:0:0:0:0:0"},
 					Params:     make(map[string]string),
@@ -521,7 +519,6 @@ func getNotifyMsg() testCase {
 				SipVersion: sipmsg.DefaultSipVersion,
 			},
 			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-
 				"CSeq": {
 					FiledValue: []string{"1 NOTIFY"},
 					Params:     make(map[string]string),

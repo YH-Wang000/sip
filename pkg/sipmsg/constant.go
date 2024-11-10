@@ -1,7 +1,7 @@
 package sipmsg
 
 const (
-	CRLF = "/r/n"
+	CRLF = "\r\n"
 	SP   = " "
 	TAB  = "\t"
 )
@@ -52,4 +52,5 @@ const (
 const (
 	DefaultSipVersion = "SIP/2.0"
 	DefaultSipPort    = "5060"
+	DefaultSipsPort   = "5060"
 )

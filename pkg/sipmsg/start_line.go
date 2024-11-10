@@ -54,7 +54,7 @@ type RequestLine struct {
 }
 
 func (r *RequestLine) String() string {
-	return ""
+	return string(r.Method) + SP + r.RequestUri.String() + SP + r.SipVersion
 }
 
 func (r *RequestLine) IsRequestLine() bool {
@@ -73,6 +73,32 @@ type SipUri struct {
 	Port          string        `validate:"numeric"`
 	UriParameters map[SipUriParamNameEnum]string
 	Headers       map[string]string
+}
+
+func (s *SipUri) String() string {
+	var data strings.Builder
+	data.WriteString(string(s.Scheme) + ":")
+	if s.User != "" {
+		data.WriteString(s.User)
+		if s.Password != "" {
+			data.WriteString(":" + s.Password)
+		}
+		data.WriteString("@")
+	}
+	data.WriteString(s.Host)
+	if s.Port != "" {
+		if (s.Scheme == Sip && s.Port != DefaultSipPort) || (s.Scheme == Sips && s.Port != DefaultSipsPort) {
+			// only if the port is not the default port, then add it to the URI
+			data.WriteString(":" + s.Port)
+		}
+	}
+	for key, value := range s.UriParameters {
+		data.WriteString(";" + string(key) + "=" + value)
+	}
+	for key, value := range s.Headers {
+		data.WriteString(";" + key + "=" + value)
+	}
+	return data.String()
 }
 
 func ParseSipUri(uri string) (*SipUri, error) {
@@ -150,7 +176,7 @@ type StatusLine struct {
 }
 
 func (s *StatusLine) String() string {
-	return ""
+	return s.SipVersion + SP + strconv.Itoa(s.StatusCode) + SP + s.ReasonPhrase
 }
 
 func (s *StatusLine) IsRequestLine() bool {

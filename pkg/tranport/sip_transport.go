@@ -5,7 +5,9 @@ import (
 	"net"
 	"strconv"
 	"sync"
+	"time"
 
+	"sip/pkg/log"
 	"sip/pkg/sipmsg"
 )
 
@@ -15,7 +17,6 @@ type MessageSender interface {
 }
 
 type ConnMgr interface {
-	AddConn(index TransportIndex, conn net.Conn)
 	GetConn(TransportIndex) (net.Conn, bool)
 }
 
@@ -27,7 +28,7 @@ type SipTransport interface {
 
 type sipTransportImpl struct {
 	Role         string
-	ConnMapMutex sync.Mutex
+	connMapMutex sync.Mutex
 	connMap      map[TransportIndex]net.Conn
 }
 
@@ -77,16 +78,49 @@ func (s *sipTransportImpl) SetMessageHandler(f func(msg *sipmsg.GenericMessage))
 	panic("implement me")
 }
 
-func (s *sipTransportImpl) AddConn(index TransportIndex, conn net.Conn) {
-	s.connMap[index] = conn
-}
-
 func (s *sipTransportImpl) GetConn(index TransportIndex) (net.Conn, bool) {
+	s.connMapMutex.Lock()
+	defer s.connMapMutex.Unlock()
 	conn, ok := s.connMap[index]
 	if !ok {
-		return nil, false
+		newConn, err := s.createNewConn(index)
+		if err != nil {
+			log.Error("create new conn error: ", err)
+			return nil, false
+		}
+		s.connMap[index] = newConn
+		return newConn, true
 	}
 	return conn, true
+}
+
+func (s *sipTransportImpl) createNewConn(index TransportIndex) (net.Conn, error) {
+	switch index.Network {
+	case "tcp":
+		return s.createNewTcpConn(index)
+	case "udp":
+	}
+	return nil, nil
+}
+
+func (s *sipTransportImpl) createNewTcpConn(index TransportIndex) (net.Conn, error) {
+	if s.Role == "proxy" {
+		dialer := &net.Dialer{
+			LocalAddr: &net.TCPAddr{
+				IP:   net.ParseIP("0.0.0.0"),
+				Port: 5060,
+			},
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}
+		conn, err := dialer.Dial(index.Network, index.Ip+":"+strconv.Itoa(index.Port))
+		if err == nil {
+			// proxy should use 5060 as source port first
+			return conn, nil
+		}
+		log.Debug("5060 is already used, proxy can't use it")
+	}
+	return net.Dial(index.Network, index.Ip+":"+strconv.Itoa(index.Port))
 }
 
 var defaultPortMap = map[string]int{

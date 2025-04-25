@@ -1,157 +1,71 @@
 package sipmsg
 
 import (
-	"bufio"
-	"errors"
-	"maps"
 	"strings"
+
+	"sip/pkg/log"
 )
 
 // SipMessageHeader header = "header-name" HCOLON header-value *(COMMA header-value)
 // HCOLON = ':'+' ' = ": "
 // header-name: header-value1,header-value2;param1=value1;param2=value2
-type SipMessageHeader map[string]*HeaderFiledValue
+type SipMessageHeader map[string][]*HeaderFiledValue
 
 type HeaderFiledValue struct {
-	FiledValue []string
+	FieldValue []string
 	Params     map[string]string
 }
 
-func (h SipMessageHeader) Lookup(key string) (*HeaderFiledValue, bool) {
+func (h SipMessageHeader) Lookup(key string) ([]*HeaderFiledValue, bool) {
 	value, ok := h[key]
 	return value, ok
 }
 
-func ParseHeader(text string) (string, *HeaderFiledValue, error) {
-	if len(text) == 0 {
-		return "", nil, errors.New("invalid header string")
+func (h SipMessageHeader) Add(key string, value *HeaderFiledValue) {
+	if _, ok := h[key]; !ok {
+		h[key] = []*HeaderFiledValue{value}
+		return
 	}
-
-	headerName, text, found := strings.Cut(text, ":")
-	if !found {
-		return "", nil, errors.New("invalid header string")
-	}
-
-	return headerName, paresHeaderFiledValue(text), nil
+	h[key] = append(h[key], value)
 }
 
-func paresHeaderFiledValue(text string) *HeaderFiledValue {
-	text = strings.TrimSpace(text)
-	indices := getAngleBracketIndices(text)
-	result := &HeaderFiledValue{
-		FiledValue: make([]string, 0),
-		Params:     make(map[string]string),
-	}
-	state := 0
-	lastIndex := 0
-	for i, c := range text {
-		if c == ',' && state == 0 && checkIndices(indices, i) {
-			value := text[lastIndex:i]
-			result.FiledValue = append(result.FiledValue, strings.TrimSpace(value))
-			lastIndex = i + 1
-		}
-		if c == ';' && checkIndices(indices, i) {
-			if state == 0 {
-				value := text[lastIndex:i]
-				result.FiledValue = append(result.FiledValue, value)
-				lastIndex = i + 1
-				state = 1
-				continue
-			}
-			paramsStr := text[lastIndex:i]
-			key, value, found := strings.Cut(paramsStr, "=")
-			if !found {
-				continue
-			}
-			result.Params[key] = value
-			lastIndex = i + 1
-		}
-	}
-	if state == 0 {
-		result.FiledValue = append(result.FiledValue, strings.TrimSpace(text[lastIndex:]))
-	} else if state == 1 {
-		paramsStr := text[lastIndex:]
-		key, value, found := strings.Cut(paramsStr, "=")
-		if !found {
-			return result
-		}
-		result.Params[key] = value
-	}
-	return result
+type ViaHeader struct {
+	Protocol  string            // 协议版本，例如 "SIP/2.0"
+	Transport string            // 传输协议，例如 "UDP", "TCP", "TLS"
+	SentBy    string            // 发送方地址，例如 "192.168.1.1:5060"
+	Branch    string            // 分支标识，例如 "z9hG4bK123456"
+	Params    map[string]string // 其他参数
 }
 
-func checkIndices(indices [][2]int, i int) bool {
-	for _, index := range indices {
-		if index[0] <= i && i <= index[1] {
-			return false
-		}
+func (v *ViaHeader) From(headerValue *HeaderFiledValue) {
+	if len(headerValue.FieldValue) == 0 {
+		return
 	}
-	return true
-}
 
-// getAngleBracketIndices Get the indices of all pairs of < and > from a string
-func getAngleBracketIndices(s string) [][2]int {
-	var indices [][2]int
-	balance := 0
-	left := 0
-	for i, char := range s {
-		if char == '<' {
-			if balance == 0 {
-				left = i
-			}
-			balance++
-		} else if char == '>' {
-			balance--
-			if balance == 0 {
-				// 找到一对匹配的 < 和 >
-				indices = append(indices, [2]int{left, i})
-			}
-		}
+	// 解析 FieldValue，格式为 "SIP/2.0/UDP 192.168.1.1:5060"
+	parts := strings.Fields(headerValue.FieldValue[0])
+	if len(parts) < 2 {
+		return
 	}
-	return indices
-}
 
-func ReadHeaders(s *bufio.Scanner) (map[string]*HeaderFiledValue, error) {
-	headers := make(map[string]*HeaderFiledValue)
-	var wholeHeader strings.Builder
-	for s.Scan() {
-		headerLine := s.Text()
-		if headerLine == "" {
-			// This means the end of the headers
-			if err := populateHeadersMap(wholeHeader.String(), headers); err != nil {
-				return nil, err
-			}
-			break
-		}
-		if !strings.HasPrefix(headerLine, SP) && !strings.HasPrefix(headerLine, TAB) {
-			// This means a new header, the old header must be processed
-			if err := populateHeadersMap(wholeHeader.String(), headers); err != nil {
-				return nil, err
-			}
-			// Clear the previous row of data and prepare the next header
-			wholeHeader.Reset()
-		}
-		headerLine = strings.TrimPrefix(headerLine, SP)
-		headerLine = strings.TrimPrefix(headerLine, TAB)
-		wholeHeader.WriteString(headerLine)
+	// 解析协议版本和传输协议，例如 "SIP/2.0/UDP"
+	protocolParts := strings.Split(parts[0], "/")
+	if len(protocolParts) == 3 {
+		v.Protocol = protocolParts[0] + "/" + protocolParts[1]
+		v.Transport = protocolParts[2]
+	} else {
+		log.Error("Invalid via header format")
 	}
-	if s.Err() != nil {
-		return nil, s.Err()
-	}
-	return headers, nil
-}
 
-func populateHeadersMap(headerStr string, headers map[string]*HeaderFiledValue) error {
-	if len(headerStr) > 0 {
-		headerKey, headerValue, err := ParseHeader(headerStr)
-		if err != nil {
-			return err
+	// 解析发送方地址，例如 "192.168.1.1:5060"
+	v.SentBy = parts[1]
+
+	// 解析参数，例如 branch=z9hG4bK123456
+	v.Params = make(map[string]string)
+	for key, value := range headerValue.Params {
+		v.Params[key] = value
+		if key == "branch" {
+			v.Branch = value
 		}
-		if hValue, ok := headers[headerKey]; ok {
-			headerValue.FiledValue = append(headerValue.FiledValue, hValue.FiledValue...)
-			maps.Copy(headerValue.Params, hValue.Params)
-		}
-		headers[headerKey] = headerValue
 	}
-	return nil
 }

@@ -1,39 +1,19 @@
 package sipmsg
 
-import (
-	"log/slog"
-	"slices"
-
-	"sip/pkg/log"
-
-	"github.com/go-playground/validator/v10"
-)
-
-func init() {
-	err := Validator.RegisterValidation("checkSipVersion", checkSipVersion)
-	if err != nil {
-		log.Warn("Failed to register validation for sip version", slog.Any("error", err))
+func GetHeaderFieldValues(headers SipMessageHeader, headerName string) ([]*HeaderFiledValue, bool) {
+	if headerFiledValue, ok := headers[HeaderKey(headerName).Normalize()]; ok {
+		return headerFiledValue, true
 	}
-	err = Validator.RegisterValidation("checkSipRequestMethod", checkSipRequestMethod)
-	if err != nil {
-		log.Warn("Failed to register validation for sip request method enum", slog.Any("error", err))
+	if headerFiledValue, ok := headers[HeaderKey(headerName).Shorten()]; ok {
+		return headerFiledValue, true
 	}
-	err = Validator.RegisterValidation("checkSipScheme", checkSipScheme)
-	if err != nil {
-		log.Warn("Failed to register validation for sip scheme enum", slog.Any("error", err))
-	}
+	return nil, false
 }
 
-var Validator = validator.New(validator.WithRequiredStructEnabled())
-
-func checkSipVersion(fl validator.FieldLevel) bool {
-	return fl.Field().String() == DefaultSipVersion
-}
-
-func checkSipRequestMethod(fl validator.FieldLevel) bool {
-	return SipRequestMethodSet[MethodEnum(fl.Field().String())]
-}
-
-func checkSipScheme(fl validator.FieldLevel) bool {
-	return slices.Contains([]SipSchemeEnum{Sip, Sips, Tel}, SipSchemeEnum(fl.Field().String()))
+func GetFirstHeaderByKey(headers SipMessageHeader, key string) (*HeaderFiledValue, bool) {
+	fieldValues, ok := GetHeaderFieldValues(headers, key)
+	if !ok || len(fieldValues) == 0 {
+		return nil, false
+	}
+	return fieldValues[0], true
 }

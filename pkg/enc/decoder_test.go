@@ -67,53 +67,53 @@ func getRegisterMsg() testCase {
 				RequestUri: sipUri,
 				SipVersion: sipmsg.DefaultSipVersion,
 			},
-			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-				"Call-ID": {
-					FiledValue: []string{"aee64e65d1ac0500d34e657ee129b61a@0:0:0:0:0:0:0:0"},
+			MessageHeader: map[string][]*sipmsg.HeaderFiledValue{
+				"Call-ID": {{
+					FieldValue: []string{"aee64e65d1ac0500d34e657ee129b61a@0:0:0:0:0:0:0:0"},
 					Params:     make(map[string]string),
-				},
-				"From": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"From": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "24d8f9d0",
 					},
-				},
-				"To": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"To": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params:     make(map[string]string),
-				},
-				"Via": {
-					FiledValue: []string{"SIP/2.0/UDP 127.0.0.1:5060"},
+				}},
+				"Via": {{
+					FieldValue: []string{"SIP/2.0/UDP 127.0.0.1:5060"},
 					Params: map[string]string{
 						"branch": "z9hG4bK-363233-d3bac43a3ab7f10841235227ef285e89",
 					},
-				},
-				"Max-Forwards": {
-					FiledValue: []string{"70"},
+				}},
+				"Max-Forwards": {{
+					FieldValue: []string{"70"},
 					Params:     make(map[string]string),
-				},
-				"Contact": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1:5060;transport=udp;registering_acc=127_0_0_1>"},
+				}},
+				"Contact": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1:5060;transport=udp;registering_acc=127_0_0_1>"},
 					Params: map[string]string{
 						"expires": "600",
 					},
-				},
-				"Content-Length": {
-					FiledValue: []string{"0"},
+				}},
+				"Content-Length": {{
+					FieldValue: []string{"0"},
 					Params:     make(map[string]string),
-				},
-				"CSeq": {
-					FiledValue: []string{"1 REGISTER"},
+				}},
+				"CSeq": {{
+					FieldValue: []string{"1 REGISTER"},
 					Params:     make(map[string]string),
-				},
-				"User-Agent": {
-					FiledValue: []string{"Jitsi2.10.5550Windows 10"},
+				}},
+				"User-Agent": {{
+					FieldValue: []string{"Jitsi2.10.5550Windows 10"},
 					Params:     make(map[string]string),
-				},
-				"Expires": {
-					FiledValue: []string{"600"},
+				}},
+				"Expires": {{
+					FieldValue: []string{"600"},
 					Params:     make(map[string]string),
-				},
+				}},
 			},
 			MessageBody: nil,
 		},
@@ -133,43 +133,43 @@ func getNotImplementedMsg() testCase {
 				StatusCode:   sipmsg.NotImplemented,
 				ReasonPhrase: "Not implemented",
 			},
-			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-				"CSeq": {
-					FiledValue: []string{"1 REGISTER"},
+			MessageHeader: map[string][]*sipmsg.HeaderFiledValue{
+				"CSeq": {{
+					FieldValue: []string{"1 REGISTER"},
 					Params:     make(map[string]string),
-				},
-				"Call-ID": {
-					FiledValue: []string{"aee64e65d1ac0500d34e657ee129b61a@0:0:0:0:0:0:0:0"},
+				}},
+				"Call-ID": {{
+					FieldValue: []string{"aee64e65d1ac0500d34e657ee129b61a@0:0:0:0:0:0:0:0"},
 					Params:     make(map[string]string),
-				},
-				"From": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"From": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "24d8f9d0",
 					},
-				},
-				"To": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"To": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params:     make(map[string]string),
-				},
-				"Via": {
-					FiledValue: []string{"SIP/2.0/UDP 127.0.0.1:5060"},
+				}},
+				"Via": {{
+					FieldValue: []string{"SIP/2.0/UDP 127.0.0.1:5060"},
 					Params: map[string]string{
 						"branch": "z9hG4bK-363233-d3bac43a3ab7f10841235227ef285e89",
 					},
-				},
-				"Contact": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1:5060;transport=udp;registering_acc=127_0_0_1>"},
+				}},
+				"Contact": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1:5060;transport=udp;registering_acc=127_0_0_1>"},
 					Params:     map[string]string{},
-				},
-				"User-Agent": {
-					FiledValue: []string{"Jitsi2.10.5550Windows 10"},
+				}},
+				"User-Agent": {{
+					FieldValue: []string{"Jitsi2.10.5550Windows 10"},
 					Params:     make(map[string]string),
-				},
-				"Content-Length": {
-					FiledValue: []string{"0"},
+				}},
+				"Content-Length": {{
+					FieldValue: []string{"0"},
 					Params:     make(map[string]string),
-				},
+				}},
 			},
 			MessageBody: nil,
 		},
@@ -189,53 +189,53 @@ func getOKMsg() testCase {
 				StatusCode:   sipmsg.OK,
 				ReasonPhrase: "OK",
 			},
-			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-				"Via": {
-					FiledValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
+			MessageHeader: map[string][]*sipmsg.HeaderFiledValue{
+				"Via": {{
+					FieldValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
 					Params: map[string]string{
 						"branch": "z9hG4bK-363233-e98f9f39046dbf258710f7ae4f28dcb0",
 					},
-				},
-				"From": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"From": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "e4e05b79",
 					},
-				},
-				"To": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"To": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "2c59042ed6a4d78b",
 					},
-				},
-				"CSeq": {
-					FiledValue: []string{"2 REGISTER"},
+				}},
+				"CSeq": {{
+					FieldValue: []string{"2 REGISTER"},
 					Params:     make(map[string]string),
-				},
-				"Call-ID": {
-					FiledValue: []string{"2030ada093ecfb682135044010ae7621@0:0:0:0:0:0:0:0"},
+				}},
+				"Call-ID": {{
+					FieldValue: []string{"2030ada093ecfb682135044010ae7621@0:0:0:0:0:0:0:0"},
 					Params:     make(map[string]string),
-				},
-				"Contact": {
-					FiledValue: []string{"\"123456\"<sip:123456@127.0.0.1:8011;transport=udp;registering_acc=127_0_0_1>"},
+				}},
+				"Contact": {{
+					FieldValue: []string{"\"123456\"<sip:123456@127.0.0.1:8011;transport=udp;registering_acc=127_0_0_1>"},
 					Params:     map[string]string{},
-				},
-				"Server": {
-					FiledValue: []string{"miniSIPServer V40 (5 clients) build 20231103"},
+				}},
+				"Server": {{
+					FieldValue: []string{"miniSIPServer V40 (5 clients) build 20231103"},
 					Params:     map[string]string{},
-				},
-				"Allow": {
-					FiledValue: []string{"ACK", "BYE", "CANCEL", "INFO", "INVITE", "MESSAGE", "NOTIFY", "OPTIONS", "PRACK", "REFER", "REGISTER", "SUBSCRIBE"},
+				}},
+				"Allow": {{
+					FieldValue: []string{"ACK", "BYE", "CANCEL", "INFO", "INVITE", "MESSAGE", "NOTIFY", "OPTIONS", "PRACK", "REFER", "REGISTER", "SUBSCRIBE"},
 					Params:     make(map[string]string),
-				},
-				"Expires": {
-					FiledValue: []string{"120"},
+				}},
+				"Expires": {{
+					FieldValue: []string{"120"},
 					Params:     make(map[string]string),
-				},
-				"Content-Length": {
-					FiledValue: []string{"0"},
+				}},
+				"Content-Length": {{
+					FieldValue: []string{"0"},
 					Params:     make(map[string]string),
-				},
+				}},
 			},
 			MessageBody: nil,
 		},
@@ -255,45 +255,45 @@ func getUnauthorizedMsg() testCase {
 				StatusCode:   sipmsg.Unauthorized,
 				ReasonPhrase: "Unauthorized",
 			},
-			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-				"Via": {
-					FiledValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
+			MessageHeader: map[string][]*sipmsg.HeaderFiledValue{
+				"Via": {{
+					FieldValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
 					Params: map[string]string{
 						"branch": "z9hG4bK-363233-6a004c7b5a86f4b740dfd55cf1639017",
 					},
-				},
-				"From": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"From": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "e4e05b79",
 					},
-				},
-				"To": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"To": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "06212244e59e56d2",
 					},
-				},
-				"CSeq": {
-					FiledValue: []string{"1 REGISTER"},
+				}},
+				"CSeq": {{
+					FieldValue: []string{"1 REGISTER"},
 					Params:     make(map[string]string),
-				},
-				"Call-ID": {
-					FiledValue: []string{"2030ada093ecfb682135044010ae7621@0:0:0:0:0:0:0:0"},
+				}},
+				"Call-ID": {{
+					FieldValue: []string{"2030ada093ecfb682135044010ae7621@0:0:0:0:0:0:0:0"},
 					Params:     make(map[string]string),
-				},
-				"Allow": {
-					FiledValue: []string{"ACK", "BYE", "CANCEL", "INFO", "INVITE", "MESSAGE", "NOTIFY", "OPTIONS", "PRACK", "REFER", "REGISTER", "SUBSCRIBE"},
+				}},
+				"Allow": {{
+					FieldValue: []string{"ACK", "BYE", "CANCEL", "INFO", "INVITE", "MESSAGE", "NOTIFY", "OPTIONS", "PRACK", "REFER", "REGISTER", "SUBSCRIBE"},
 					Params:     make(map[string]string),
-				},
-				"WWW-Authenticate": {
-					FiledValue: []string{"Digest realm=\"myvoipapp.com\"", "nonce=\"93E85702CA304649CE96E45D74AB3CA6\"", "algorithm=MD5", "stale=true"},
+				}},
+				"WWW-Authenticate": {{
+					FieldValue: []string{"Digest realm=\"myvoipapp.com\"", "nonce=\"93E85702CA304649CE96E45D74AB3CA6\"", "algorithm=MD5", "stale=true"},
 					Params:     make(map[string]string),
-				},
-				"Content-Length": {
-					FiledValue: []string{"0"},
+				}},
+				"Content-Length": {{
+					FieldValue: []string{"0"},
 					Params:     make(map[string]string),
-				},
+				}},
 			},
 			MessageBody: nil,
 		},
@@ -313,49 +313,49 @@ func getAcceptedMsg() testCase {
 				StatusCode:   sipmsg.Accepted,
 				ReasonPhrase: "Accepted",
 			},
-			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-				"Via": {
-					FiledValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
+			MessageHeader: map[string][]*sipmsg.HeaderFiledValue{
+				"Via": {{
+					FieldValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
 					Params: map[string]string{
 						"branch": "z9hG4bK-363233-de895ecefc691ac8219e6ff3f9916e68",
 					},
-				},
-				"From": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"From": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "3ffbadba",
 					},
-				},
-				"To": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"To": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "e9c95b596d0bf435",
 					},
-				},
-				"CSeq": {
-					FiledValue: []string{"1 SUBSCRIBE"},
+				}},
+				"CSeq": {{
+					FieldValue: []string{"1 SUBSCRIBE"},
 					Params:     make(map[string]string),
-				},
-				"Call-ID": {
-					FiledValue: []string{"b4c2c6424b6577bbd25ee8f852447c01@0:0:0:0:0:0:0:0"},
+				}},
+				"Call-ID": {{
+					FieldValue: []string{"b4c2c6424b6577bbd25ee8f852447c01@0:0:0:0:0:0:0:0"},
 					Params:     make(map[string]string),
-				},
-				"Allow": {
-					FiledValue: []string{"ACK", "BYE", "CANCEL", "INFO", "INVITE", "MESSAGE", "NOTIFY", "OPTIONS", "PRACK", "REFER", "REGISTER", "SUBSCRIBE"},
+				}},
+				"Allow": {{
+					FieldValue: []string{"ACK", "BYE", "CANCEL", "INFO", "INVITE", "MESSAGE", "NOTIFY", "OPTIONS", "PRACK", "REFER", "REGISTER", "SUBSCRIBE"},
 					Params:     make(map[string]string),
-				},
-				"Contact": {
-					FiledValue: []string{"<sip:123456@192.168.1.125>"},
+				}},
+				"Contact": {{
+					FieldValue: []string{"<sip:123456@192.168.1.125>"},
 					Params:     make(map[string]string),
-				},
-				"Expires": {
-					FiledValue: []string{"300"},
+				}},
+				"Expires": {{
+					FieldValue: []string{"300"},
 					Params:     make(map[string]string),
-				},
-				"Content-Length": {
-					FiledValue: []string{"0"},
+				}},
+				"Content-Length": {{
+					FieldValue: []string{"0"},
 					Params:     make(map[string]string),
-				},
+				}},
 			},
 			MessageBody: nil,
 		},
@@ -376,59 +376,59 @@ func getSubscribeMsg() testCase {
 				RequestUri: sipUri,
 				SipVersion: sipmsg.DefaultSipVersion,
 			},
-			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-				"Call-ID": {
-					FiledValue: []string{"59d36468f9e5b94151447e28c066e592@0:0:0:0:0:0:0:0"},
+			MessageHeader: map[string][]*sipmsg.HeaderFiledValue{
+				"Call-ID": {{
+					FieldValue: []string{"59d36468f9e5b94151447e28c066e592@0:0:0:0:0:0:0:0"},
 					Params:     make(map[string]string),
-				},
-				"CSeq": {
-					FiledValue: []string{"1 SUBSCRIBE"},
+				}},
+				"CSeq": {{
+					FieldValue: []string{"1 SUBSCRIBE"},
 					Params:     make(map[string]string),
-				},
-				"From": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"From": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "7a1ed779",
 					},
-				},
-				"To": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"To": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params:     map[string]string{},
-				},
-				"Via": {
-					FiledValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
+				}},
+				"Via": {{
+					FieldValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
 					Params: map[string]string{
 						"branch": "z9hG4bK-363233-21eb7e34b931ba6d5ffea1eadc340dd0",
 					},
-				},
-				"Max-Forwards": {
-					FiledValue: []string{"70"},
+				}},
+				"Max-Forwards": {{
+					FieldValue: []string{"70"},
 					Params:     make(map[string]string),
-				},
-				"Contact": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1:8011;transport=udp;registering_acc=127_0_0_1>"},
+				}},
+				"Contact": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1:8011;transport=udp;registering_acc=127_0_0_1>"},
 					Params:     make(map[string]string),
-				},
-				"User-Agent": {
-					FiledValue: []string{"Jitsi2.10.5550Windows 10"},
+				}},
+				"User-Agent": {{
+					FieldValue: []string{"Jitsi2.10.5550Windows 10"},
 					Params:     make(map[string]string),
-				},
-				"Event": {
-					FiledValue: []string{"message-summary"},
+				}},
+				"Event": {{
+					FieldValue: []string{"message-summary"},
 					Params:     make(map[string]string),
-				},
-				"Accept": {
-					FiledValue: []string{"application/simple-message-summary"},
+				}},
+				"Accept": {{
+					FieldValue: []string{"application/simple-message-summary"},
 					Params:     make(map[string]string),
-				},
-				"Expires": {
-					FiledValue: []string{"3600"},
+				}},
+				"Expires": {{
+					FieldValue: []string{"3600"},
 					Params:     make(map[string]string),
-				},
-				"Content-Length": {
-					FiledValue: []string{"0"},
+				}},
+				"Content-Length": {{
+					FieldValue: []string{"0"},
 					Params:     make(map[string]string),
-				},
+				}},
 			},
 			MessageBody: nil,
 		},
@@ -449,55 +449,55 @@ func getOptionsMsg() testCase {
 				RequestUri: sipUri,
 				SipVersion: sipmsg.DefaultSipVersion,
 			},
-			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-				"Call-ID": {
-					FiledValue: []string{"1204c8d015be5f55ce63ab53eeba1e33@0:0:0:0:0:0:0:0"},
+			MessageHeader: map[string][]*sipmsg.HeaderFiledValue{
+				"Call-ID": {{
+					FieldValue: []string{"1204c8d015be5f55ce63ab53eeba1e33@0:0:0:0:0:0:0:0"},
 					Params:     make(map[string]string),
-				},
-				"CSeq": {
-					FiledValue: []string{"1 OPTIONS"},
+				}},
+				"CSeq": {{
+					FieldValue: []string{"1 OPTIONS"},
 					Params:     make(map[string]string),
-				},
-				"From": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"From": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params: map[string]string{
 						"tag": "12a04b31",
 					},
-				},
-				"To": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+				}},
+				"To": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
 					Params:     map[string]string{},
-				},
-				"Via": {
-					FiledValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
+				}},
+				"Via": {{
+					FieldValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
 					Params: map[string]string{
 						"branch": "z9hG4bK-363233-68f98cc08883cc217fdd2f28afbe6a67",
 					},
-				},
-				"Max-Forwards": {
-					FiledValue: []string{"70"},
+				}},
+				"Max-Forwards": {{
+					FieldValue: []string{"70"},
 					Params:     make(map[string]string),
-				},
-				"Contact": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1:8011;transport=udp;registering_acc=127_0_0_1>"},
+				}},
+				"Contact": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1:8011;transport=udp;registering_acc=127_0_0_1>"},
 					Params:     make(map[string]string),
-				},
-				"User-Agent": {
-					FiledValue: []string{"Jitsi2.10.5550Windows 10"},
+				}},
+				"User-Agent": {{
+					FieldValue: []string{"Jitsi2.10.5550Windows 10"},
 					Params:     make(map[string]string),
-				},
-				"Allow": {
-					FiledValue: []string{"INFO", "UPDATE", "OPTIONS", "MESSAGE", "BYE", "REFER", "SUBSCRIBE", "ACK", "CANCEL", "PUBLISH", "NOTIFY", "INVITE"},
+				}},
+				"Allow": {{
+					FieldValue: []string{"INFO", "UPDATE", "OPTIONS", "MESSAGE", "BYE", "REFER", "SUBSCRIBE", "ACK", "CANCEL", "PUBLISH", "NOTIFY", "INVITE"},
 					Params:     make(map[string]string),
-				},
-				"Allow-Events": {
-					FiledValue: []string{"refer", "conference", "remote-control", "presence", "presence.winfo", "message-summary"},
+				}},
+				"Allow-Events": {{
+					FieldValue: []string{"refer", "conference", "remote-control", "presence", "presence.winfo", "message-summary"},
 					Params:     make(map[string]string),
-				},
-				"Content-Length": {
-					FiledValue: []string{"0"},
+				}},
+				"Content-Length": {{
+					FieldValue: []string{"0"},
 					Params:     make(map[string]string),
-				},
+				}},
 			},
 			MessageBody: nil,
 		},
@@ -518,63 +518,235 @@ func getNotifyMsg() testCase {
 				RequestUri: sipUri,
 				SipVersion: sipmsg.DefaultSipVersion,
 			},
-			MessageHeader: map[string]*sipmsg.HeaderFiledValue{
-				"CSeq": {
-					FiledValue: []string{"1 NOTIFY"},
+			MessageHeader: map[string][]*sipmsg.HeaderFiledValue{
+				"CSeq": {{
+					FieldValue: []string{"1 NOTIFY"},
 					Params:     make(map[string]string),
-				},
-				"From": {
-					FiledValue: []string{"<sip:123456@192.168.1.125>"},
+				}},
+				"From": {{
+					FieldValue: []string{"<sip:123456@192.168.1.125>"},
 					Params: map[string]string{
 						"tag": "cad6a0c3",
 					},
-				},
-				"To": {
-					FiledValue: []string{"<sip:123456@192.168.1.125>"},
+				}},
+				"To": {{
+					FieldValue: []string{"<sip:123456@192.168.1.125>"},
 					Params: map[string]string{
 						"tag": "e8a3d77574141088",
 					},
-				},
-				"Call-ID": {
-					FiledValue: []string{"16508c3d-cb64df3a-20231202-115747"},
+				}},
+				"Call-ID": {{
+					FieldValue: []string{"16508c3d-cb64df3a-20231202-115747"},
 					Params:     make(map[string]string),
-				},
-				"Contact": {
-					FiledValue: []string{"\"123456\" <sip:123456@127.0.0.1:8011;transport=udp;registering_acc=127_0_0_1>"},
+				}},
+				"Contact": {{
+					FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1:8011;transport=udp;registering_acc=127_0_0_1>"},
 					Params:     make(map[string]string),
-				},
-				"User-Agent": {
-					FiledValue: []string{"Jitsi2.10.5550Windows 10"},
+				}},
+				"User-Agent": {{
+					FieldValue: []string{"Jitsi2.10.5550Windows 10"},
 					Params:     make(map[string]string),
-				},
-				"Max-Forwards": {
-					FiledValue: []string{"70"},
+				}},
+				"Max-Forwards": {{
+					FieldValue: []string{"70"},
 					Params:     make(map[string]string),
-				},
-				"Event": {
-					FiledValue: []string{"presence"},
+				}},
+				"Event": {{
+					FieldValue: []string{"presence"},
 					Params:     make(map[string]string),
-				},
-				"Subscription-State": {
-					FiledValue: []string{"active"},
+				}},
+				"Subscription-State": {{
+					FieldValue: []string{"active"},
 					Params:     make(map[string]string),
-				},
-				"Via": {
-					FiledValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
+				}},
+				"Via": {{
+					FieldValue: []string{"SIP/2.0/UDP 127.0.0.1:8011"},
 					Params: map[string]string{
 						"branch": "z9hG4bK-363233-02ef62700a0e343f4cc2a1e6ebf36bbe",
 					},
-				},
-				"Content-Type": {
-					FiledValue: []string{"application/pidf+xml"},
+				}},
+				"Content-Type": {{
+					FieldValue: []string{"application/pidf+xml"},
 					Params:     map[string]string{},
-				},
-				"Content-Length": {
-					FiledValue: []string{"412"},
+				}},
+				"Content-Length": {{
+					FieldValue: []string{"412"},
 					Params:     make(map[string]string),
-				},
+				}},
 			},
 			MessageBody: []byte{0x3c, 0x3f, 0x78, 0x6d, 0x6c, 0x20, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x3d, 0x22, 0x31, 0x2e, 0x30, 0x22, 0x20, 0x65, 0x6e, 0x63, 0x6f, 0x64, 0x69, 0x6e, 0x67, 0x3d, 0x22, 0x55, 0x54, 0x46, 0x2d, 0x38, 0x22, 0x20, 0x73, 0x74, 0x61, 0x6e, 0x64, 0x61, 0x6c, 0x6f, 0x6e, 0x65, 0x3d, 0x22, 0x6e, 0x6f, 0x22, 0x3f, 0x3e, 0x3c, 0x70, 0x72, 0x65, 0x73, 0x65, 0x6e, 0x63, 0x65, 0x20, 0x78, 0x6d, 0x6c, 0x6e, 0x73, 0x3d, 0x22, 0x75, 0x72, 0x6e, 0x3a, 0x69, 0x65, 0x74, 0x66, 0x3a, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x3a, 0x78, 0x6d, 0x6c, 0x3a, 0x6e, 0x73, 0x3a, 0x70, 0x69, 0x64, 0x66, 0x22, 0x20, 0x78, 0x6d, 0x6c, 0x6e, 0x73, 0x3a, 0x64, 0x6d, 0x3d, 0x22, 0x75, 0x72, 0x6e, 0x3a, 0x69, 0x65, 0x74, 0x66, 0x3a, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x3a, 0x78, 0x6d, 0x6c, 0x3a, 0x6e, 0x73, 0x3a, 0x70, 0x69, 0x64, 0x66, 0x3a, 0x64, 0x61, 0x74, 0x61, 0x2d, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x22, 0x20, 0x78, 0x6d, 0x6c, 0x6e, 0x73, 0x3a, 0x72, 0x70, 0x69, 0x64, 0x3d, 0x22, 0x75, 0x72, 0x6e, 0x3a, 0x69, 0x65, 0x74, 0x66, 0x3a, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x3a, 0x78, 0x6d, 0x6c, 0x3a, 0x6e, 0x73, 0x3a, 0x70, 0x69, 0x64, 0x66, 0x3a, 0x72, 0x70, 0x69, 0x64, 0x22, 0x20, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x3d, 0x22, 0x73, 0x69, 0x70, 0x3a, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x40, 0x31, 0x32, 0x37, 0x2e, 0x30, 0x2e, 0x30, 0x2e, 0x31, 0x22, 0x3e, 0x3c, 0x64, 0x6d, 0x3a, 0x70, 0x65, 0x72, 0x73, 0x6f, 0x6e, 0x20, 0x69, 0x64, 0x3d, 0x22, 0x70, 0x36, 0x36, 0x39, 0x38, 0x22, 0x3e, 0x3c, 0x72, 0x70, 0x69, 0x64, 0x3a, 0x61, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74, 0x69, 0x65, 0x73, 0x2f, 0x3e, 0x3c, 0x2f, 0x64, 0x6d, 0x3a, 0x70, 0x65, 0x72, 0x73, 0x6f, 0x6e, 0x3e, 0x3c, 0x74, 0x75, 0x70, 0x6c, 0x65, 0x20, 0x69, 0x64, 0x3d, 0x22, 0x74, 0x34, 0x33, 0x32, 0x33, 0x22, 0x3e, 0x3c, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x3e, 0x3c, 0x62, 0x61, 0x73, 0x69, 0x63, 0x3e, 0x63, 0x6c, 0x6f, 0x73, 0x65, 0x64, 0x3c, 0x2f, 0x62, 0x61, 0x73, 0x69, 0x63, 0x3e, 0x3c, 0x2f, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x3e, 0x3c, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x63, 0x74, 0x3e, 0x73, 0x69, 0x70, 0x3a, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x40, 0x31, 0x32, 0x37, 0x2e, 0x30, 0x2e, 0x30, 0x2e, 0x31, 0x3c, 0x2f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x63, 0x74, 0x3e, 0x3c, 0x6e, 0x6f, 0x74, 0x65, 0x3e, 0x4f, 0x66, 0x66, 0x6c, 0x69, 0x6e, 0x65, 0x3c, 0x2f, 0x6e, 0x6f, 0x74, 0x65, 0x3e, 0x3c, 0x2f, 0x74, 0x75, 0x70, 0x6c, 0x65, 0x3e, 0x3c, 0x2f, 0x70, 0x72, 0x65, 0x73, 0x65, 0x6e, 0x63, 0x65, 0x3e},
+		},
+		wantErr: false,
+	}
+}
+
+type headerTestCaseArgs struct {
+	text string
+}
+
+type headerTestCase struct {
+	name            string
+	args            headerTestCaseArgs
+	wantHeaderKey   string
+	wantHeaderValue *sipmsg.HeaderFiledValue
+	wantErr         bool
+}
+
+func TestParseHeader(t *testing.T) {
+
+	testCases := getHeaderTestCases()
+
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1, err := ParseHeader(tt.args.text)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseHeader() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.wantHeaderKey {
+				t.Errorf("ParseHeader() got = %v, want %v", got, tt.wantHeaderKey)
+			}
+			if !reflect.DeepEqual(got1, tt.wantHeaderValue) {
+				t.Errorf("ParseHeader() got1 = %v, want %v", got1, tt.wantHeaderValue)
+			}
+		})
+	}
+}
+
+func getHeaderTestCases() []headerTestCase {
+	cases := make([]headerTestCase, 0)
+	cases = append(cases, getFromHeaderTestCase())
+	cases = append(cases, getToHeaderTestCase())
+	cases = append(cases, getCSeqHeaderTestCase())
+	cases = append(cases, getViaHeaderTestCase())
+	cases = append(cases, getMaxForwardsHeaderTestCase())
+	cases = append(cases, getUserAgentHeaderTestCase())
+	cases = append(cases, getExpiresHeaderTestCase())
+	cases = append(cases, getContactHeaderTestCase())
+	return cases
+}
+
+func getFromHeaderTestCase() headerTestCase {
+	return headerTestCase{
+		name: "parse header From",
+		args: headerTestCaseArgs{
+			text: "From: \"123456\" <sip:123456@127.0.0.1>;tag=24d8f9d0",
+		},
+		wantHeaderKey: "From",
+		wantHeaderValue: &sipmsg.HeaderFiledValue{
+			FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+			Params: map[string]string{
+				"tag": "24d8f9d0",
+			},
+		},
+		wantErr: false,
+	}
+}
+
+func getToHeaderTestCase() headerTestCase {
+	return headerTestCase{
+		name: "parse header To",
+		args: headerTestCaseArgs{
+			text: "To: \"123456\" <sip:123456@127.0.0.1>",
+		},
+		wantHeaderKey: "To",
+		wantHeaderValue: &sipmsg.HeaderFiledValue{
+			FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1>"},
+			Params:     map[string]string{},
+		},
+		wantErr: false,
+	}
+}
+
+func getCSeqHeaderTestCase() headerTestCase {
+	return headerTestCase{
+		name: "parse header CSeq",
+		args: headerTestCaseArgs{
+			text: "CSeq: 1 REGISTER",
+		},
+		wantHeaderKey: "CSeq",
+		wantHeaderValue: &sipmsg.HeaderFiledValue{
+			FieldValue: []string{"1 REGISTER"},
+			Params:     map[string]string{},
+		},
+		wantErr: false,
+	}
+}
+
+func getViaHeaderTestCase() headerTestCase {
+	return headerTestCase{
+		name: "parse header Via",
+		args: headerTestCaseArgs{
+			text: "Via: SIP/2.0/UDP 127.0.0.1:5060;branch=z9hG4bK-363233-d3bac43a3ab7f10841235227ef285e89",
+		},
+		wantHeaderKey: "Via",
+		wantHeaderValue: &sipmsg.HeaderFiledValue{
+			FieldValue: []string{"SIP/2.0/UDP 127.0.0.1:5060"},
+			Params: map[string]string{
+				"branch": "z9hG4bK-363233-d3bac43a3ab7f10841235227ef285e89",
+			},
+		},
+		wantErr: false,
+	}
+}
+
+func getMaxForwardsHeaderTestCase() headerTestCase {
+	return headerTestCase{
+		name: "parse header Max-Forwards",
+		args: headerTestCaseArgs{
+			text: "Max-Forwards: 70",
+		},
+		wantHeaderKey: "Max-Forwards",
+		wantHeaderValue: &sipmsg.HeaderFiledValue{
+			FieldValue: []string{"70"},
+			Params:     map[string]string{},
+		},
+		wantErr: false,
+	}
+}
+
+func getUserAgentHeaderTestCase() headerTestCase {
+	return headerTestCase{
+		name: "parse header User-Agent",
+		args: headerTestCaseArgs{
+			text: "User-Agent: Jitsi2.10.5550Windows 10",
+		},
+		wantHeaderKey: "User-Agent",
+		wantHeaderValue: &sipmsg.HeaderFiledValue{
+			FieldValue: []string{"Jitsi2.10.5550Windows 10"},
+			Params:     map[string]string{},
+		},
+		wantErr: false,
+	}
+}
+
+func getExpiresHeaderTestCase() headerTestCase {
+	return headerTestCase{
+		name: "parse header Expires",
+		args: headerTestCaseArgs{
+			text: "Expires: 600",
+		},
+		wantHeaderKey: "Expires",
+		wantHeaderValue: &sipmsg.HeaderFiledValue{
+			FieldValue: []string{"600"},
+			Params:     map[string]string{},
+		},
+		wantErr: false,
+	}
+}
+
+func getContactHeaderTestCase() headerTestCase {
+	return headerTestCase{
+		name: "parse header Contact",
+		args: headerTestCaseArgs{
+			text: "Contact: \"123456\" <sip:123456@127.0.0.1:5060;transport=udp;registering_acc=127_0_0_1>;expires=600",
+		},
+		wantHeaderKey: "Contact",
+		wantHeaderValue: &sipmsg.HeaderFiledValue{
+			FieldValue: []string{"\"123456\" <sip:123456@127.0.0.1:5060;transport=udp;registering_acc=127_0_0_1>"},
+			Params: map[string]string{
+				"expires": "600",
+			},
 		},
 		wantErr: false,
 	}

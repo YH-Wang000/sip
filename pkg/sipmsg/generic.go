@@ -27,3 +27,11 @@ func ReadBody(s *bufio.Scanner, contentLength int) ([]byte, error) {
 	}
 	return body.Bytes(), nil
 }
+
+func IsRequest(message *GenericMessage) bool {
+	return message.StartLine.IsRequestLine()
+}
+
+func IsResponse(message *GenericMessage) bool {
+	return message.StartLine.IsStatusLine()
+}

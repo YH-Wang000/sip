@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net"
 	"strconv"
+	"strings"
 	"time"
 
 	"sip/pkg/sipmsg"
@@ -118,7 +119,7 @@ func (d *decoder) ReadMessage() (*sipmsg.GenericMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	headers, err := sipmsg.ReadHeaders(d.s)
+	headers, err := ReadHeaders(d.s)
 	if err != nil {
 		return nil, err
 	}
@@ -150,14 +151,14 @@ func (d *decoder) ReadMessage() (*sipmsg.GenericMessage, error) {
 }
 
 func getContentLength(header sipmsg.SipMessageHeader) (int, error) {
-	headerValue, ok := header.Lookup("Content-Length")
-	if !ok {
+	headerValues, ok := header.Lookup("Content-Length")
+	if !ok || len(headerValues) == 0 {
 		return 0, errors.New("Content-Length header not found")
 	}
-	if len(headerValue.FiledValue) == 0 {
+	if len(headerValues[0].FieldValue) == 0 {
 		return 0, errors.New("Content-Length header value is empty")
 	}
-	return strconv.Atoi(headerValue.FiledValue[0])
+	return strconv.Atoi(headerValues[0].FieldValue[0])
 }
 
 func noBody(msg *sipmsg.GenericMessage) bool {
@@ -180,4 +181,139 @@ func splitCRLF(data []byte, atEOF bool) (advance int, token []byte, err error) {
 		return len(data), data, nil
 	}
 	return 0, nil, nil
+}
+
+func ParseHeader(text string) (string, *sipmsg.HeaderFiledValue, error) {
+	if len(text) == 0 {
+		return "", nil, errors.New("invalid header string")
+	}
+
+	headerName, text, found := strings.Cut(text, ":")
+	if !found {
+		return "", nil, errors.New("invalid header string")
+	}
+
+	return headerName, paresHeaderFiledValue(text), nil
+}
+
+func paresHeaderFiledValue(text string) *sipmsg.HeaderFiledValue {
+	text = strings.TrimSpace(text)
+	indices := getAngleBracketIndices(text)
+	result := &sipmsg.HeaderFiledValue{
+		FieldValue: make([]string, 0),
+		Params:     make(map[string]string),
+	}
+	state := 0
+	lastIndex := 0
+	for i, c := range text {
+		if c == ',' && state == 0 && checkIndices(indices, i) {
+			value := text[lastIndex:i]
+			result.FieldValue = append(result.FieldValue, strings.TrimSpace(value))
+			lastIndex = i + 1
+		}
+		if c == ';' && checkIndices(indices, i) {
+			if state == 0 {
+				value := text[lastIndex:i]
+				result.FieldValue = append(result.FieldValue, value)
+				lastIndex = i + 1
+				state = 1
+				continue
+			}
+			paramsStr := text[lastIndex:i]
+			key, value, found := strings.Cut(paramsStr, "=")
+			if !found {
+				continue
+			}
+			result.Params[key] = value
+			lastIndex = i + 1
+		}
+	}
+	if state == 0 {
+		result.FieldValue = append(result.FieldValue, strings.TrimSpace(text[lastIndex:]))
+	} else if state == 1 {
+		paramsStr := text[lastIndex:]
+		key, value, found := strings.Cut(paramsStr, "=")
+		if !found {
+			return result
+		}
+		result.Params[key] = value
+	}
+	return result
+}
+
+func checkIndices(indices [][2]int, i int) bool {
+	for _, index := range indices {
+		if index[0] <= i && i <= index[1] {
+			return false
+		}
+	}
+	return true
+}
+
+// getAngleBracketIndices Get the indices of all pairs of < and > from a string
+func getAngleBracketIndices(s string) [][2]int {
+	var indices [][2]int
+	balance := 0
+	left := 0
+	for i, char := range s {
+		if char == '<' {
+			if balance == 0 {
+				left = i
+			}
+			balance++
+		} else if char == '>' {
+			balance--
+			if balance == 0 {
+				// 找到一对匹配的 < 和 >
+				indices = append(indices, [2]int{left, i})
+			}
+		}
+	}
+	return indices
+}
+
+func ReadHeaders(s *bufio.Scanner) (map[string][]*sipmsg.HeaderFiledValue, error) {
+	headers := make(map[string][]*sipmsg.HeaderFiledValue)
+	var wholeHeader strings.Builder
+	for s.Scan() {
+		headerLine := s.Text()
+		if headerLine == "" {
+			// This means the end of the headers
+			if err := populateHeadersMap(wholeHeader.String(), headers); err != nil {
+				return nil, err
+			}
+			break
+		}
+		if !strings.HasPrefix(headerLine, sipmsg.SP) && !strings.HasPrefix(headerLine, sipmsg.TAB) {
+			// This means a new header, the old header must be processed
+			if err := populateHeadersMap(wholeHeader.String(), headers); err != nil {
+				return nil, err
+			}
+			// Clear the previous row of data and prepare the next header
+			wholeHeader.Reset()
+		}
+		headerLine = strings.TrimPrefix(headerLine, sipmsg.SP)
+		headerLine = strings.TrimPrefix(headerLine, sipmsg.TAB)
+		wholeHeader.WriteString(headerLine)
+	}
+	if s.Err() != nil {
+		return nil, s.Err()
+	}
+	return headers, nil
+}
+
+func populateHeadersMap(headerStr string, headers map[string][]*sipmsg.HeaderFiledValue) error {
+	if len(headerStr) > 0 {
+		headerKey, headerValue, err := ParseHeader(headerStr)
+		if err != nil {
+			return err
+		}
+		headerFiledValues, ok := headers[headerKey]
+		if !ok {
+			headerFiledValues = make([]*sipmsg.HeaderFiledValue, 0, 1)
+		}
+		headerFiledValues = append(headerFiledValues, headerValue)
+		headers[headerKey] = headerFiledValues
+	}
+	return nil
 }

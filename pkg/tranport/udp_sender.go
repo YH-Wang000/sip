@@ -1,7 +1,7 @@
 package tranport
 
 import (
-	"net"
+	"errors"
 
 	"sip/pkg/enc"
 	"sip/pkg/sipmsg"
@@ -27,17 +27,10 @@ func (u *UdpMessageSender) SendRequest(request *sipmsg.GenericMessage) error {
 		return err
 	}
 
-	addr := &net.UDPAddr{
-		IP:   net.ParseIP(u.index.Ip),
-		Port: u.index.Port,
+	conn, ok := u.sipTransport.GetConn(u.index)
+	if !ok {
+		return errors.New("no available conn")
 	}
-
-	conn, err := net.DialUDP("udp", nil, addr)
-	if err != nil {
-		return err
-	}
-
-	u.sipTransport.AddConn(u.index, conn)
 
 	_, err = conn.Write(encodedMsg)
 	return err

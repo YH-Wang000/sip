@@ -32,7 +32,7 @@ func (u *TcpMessageSender) SendRequest(request *sipmsg.GenericMessage) error {
 	// get connection
 	conn, ok := u.sipTransport.GetConn(u.index)
 	if !ok {
-		return errors.New("get available conn failed")
+		return errors.New("no available conn")
 	}
 
 	_, err = conn.Write(reqBytes)

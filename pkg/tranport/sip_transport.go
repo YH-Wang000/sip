@@ -16,6 +16,12 @@ type MessageSender interface {
 	SendResponse(response *sipmsg.GenericMessage) error
 }
 
+type SocketListener interface {
+	ReadMessage() (*sipmsg.GenericMessage, error)
+	Start()
+	Close()
+}
+
 type ConnMgr interface {
 	GetConn(TransportIndex) (net.Conn, bool)
 }
@@ -27,9 +33,13 @@ type SipTransport interface {
 }
 
 type sipTransportImpl struct {
-	Role         string
+	Role string
+
 	connMapMutex sync.Mutex
 	connMap      map[TransportIndex]net.Conn
+
+	listenerMapMutex sync.Mutex
+	listenerMap      map[TransportIndex]SocketListener
 }
 
 func NewSipTransportImpl(role string) SipTransport {
@@ -116,11 +126,46 @@ func (s *sipTransportImpl) createNewTcpConn(index TransportIndex) (net.Conn, err
 		conn, err := dialer.Dial(index.Network, index.Ip+":"+strconv.Itoa(index.Port))
 		if err == nil {
 			// proxy should use 5060 as source port first
+			log.Info("new tcp conn: ", conn.LocalAddr(), " -> ", conn.RemoteAddr())
+			s.listenSocket(conn, index)
 			return conn, nil
 		}
 		log.Debug("5060 is already used, proxy can't use it")
 	}
-	return net.Dial(index.Network, index.Ip+":"+strconv.Itoa(index.Port))
+	conn, err := net.Dial(index.Network, index.Ip+":"+strconv.Itoa(index.Port))
+	if err != nil {
+		return nil, err
+	}
+	log.Info("new tcp conn: ", conn.LocalAddr(), " -> ", conn.RemoteAddr())
+	s.listenSocket(conn, index)
+	return conn, nil
+}
+
+func (s *sipTransportImpl) GetConnByIndex(index TransportIndex) (net.Conn, bool) {
+	s.connMapMutex.Lock()
+	defer s.connMapMutex.Unlock()
+	conn, ok := s.connMap[index]
+	return conn, ok
+}
+
+func (s *sipTransportImpl) listenSocket(conn net.Conn, index TransportIndex) {
+	s.listenerMapMutex.Lock()
+	defer s.listenerMapMutex.Unlock()
+	socketListener := s.createSocketListener(conn, index)
+	s.listenerMap[index] = socketListener
+	socketListener.Start()
+}
+
+func (s *sipTransportImpl) createSocketListener(conn net.Conn, index TransportIndex) SocketListener {
+	switch index.Network {
+	case "tcp":
+		return NewTcpSocketListener(conn)
+	case "udp":
+		return NewUdpSocketListener(conn)
+	default:
+	}
+	log.Error("unknown network type: ", index.Network)
+	return nil
 }
 
 var defaultPortMap = map[string]int{
